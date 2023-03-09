@@ -199,12 +199,3 @@ class VPlane extends VBase:
 	
 	func collapse(root: VMF) -> String:
 		return "(" + vertices[0].collapse(root) + ") (" + vertices[1].collapse(root) + ") (" + vertices[2].collapse(root) + ")"
-
-func _ready() -> void:
-	var out = VMF.new()
-	out.add(CubeSolid.new(Vector3(0, 0, 0), Vector3(10, 10, 10)))
-	out = out.collapse()
-	
-	var file = FileAccess.open("user://out.vmf", FileAccess.WRITE)
-	file.store_string(out)
-	file.close()
