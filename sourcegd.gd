@@ -17,10 +17,10 @@ func to_kv_string(root: VMF, key: String, dict) -> String:
 		else:
 			out.append('	"' + str(index) + '" "' + str(dict[index]) + '"')
 	out.append("}")
-	return out.collapse(root)
+	return out.collapse()
 
 # classes
-class VString extends VBase:
+class VString:
 	var text: PackedStringArray
 	func _init(text: Array) -> void:
 		self.text = PackedStringArray(text)
@@ -28,7 +28,7 @@ class VString extends VBase:
 	func append(text: String) -> void:
 		self.text.append(text)
 	
-	func collapse(root: VMF) -> String:
+	func collapse() -> String:
 		return "\n".join(self.text)
 
 class VMF:
@@ -73,7 +73,7 @@ class VMF:
 			SourceGD.to_kv_string(self, "world", self.world),
 		])
 		
-		return out.collapse(self)
+		return out.collapse()
 
 class VSolids extends VBase:
 	var solids = []
@@ -87,7 +87,7 @@ class VSolids extends VBase:
 		var out = VString.new([])
 		for index in solids.size():
 			out.append(solids[index].collapse(root))
-		return out.collapse(root)
+		return out.collapse()
 
 class VBase:
 	func collapse(root: VMF) -> String:
@@ -128,7 +128,7 @@ class BaseSolid extends BaseEntity:
 		
 		out.append("}")
 		
-		return out.collapse(root)
+		return out.collapse()
 
 class CubeSolid extends BaseSolid:
 	func _init(position: Vector3, size: Vector3) -> void:
@@ -190,7 +190,7 @@ class Side extends BaseEntity:
 			'	"lightmapscale" "' + str(self.lightmapscale) + '"',
 			'	"smoothing_groups" "' + str(self.smoothing_groups) + '"',
 			'}'
-		]).collapse(root)
+		]).collapse()
 
 class VPlane extends VBase:
 	var vertices: Array
