@@ -1,6 +1,6 @@
 extends Node
 
-func to_kv_string(root: VMF, key: String, dict) -> String:
+func to_kv_string(root: VMF, key: String, dict: Variant) -> String:
 	var out = VString.new([
 		key,
 		"{"
@@ -35,7 +35,7 @@ class VMF:
 	var versioninfo: Dictionary
 	var visgroups: Array
 	var world: Dictionary
-	var entities: Array
+	var entities: VArray
 	
 	var ent_count: int
 	
@@ -53,8 +53,9 @@ class VMF:
 			"mapversion": 0,
 			"classname": "worldspawn",
 			"skyname": "",
-			"solids": VSolids.new()
+			"solids": VArray.new()
 		}
+		self.entities = VArray.new()
 	
 	func get_uid() -> String:
 		ent_count += 1
@@ -71,23 +72,46 @@ class VMF:
 			SourceGD.to_kv_string(self, "version_info", self.versioninfo),
 			SourceGD.to_kv_string(self, "visgroups", self.visgroups),
 			SourceGD.to_kv_string(self, "world", self.world),
+			self.entities.collapse(self)
 		])
 		
 		return out.collapse()
 
-class VSolids extends VBase:
-	var solids = []
+class VArray extends VBase:
+	var array: Array
 	func _init() -> void:
-		pass
+		self.array = []
 	
-	func append(solid: BaseSolid):
-		solids.append(solid)
+	func append(obj: VBase):
+		array.append(obj)
 	
 	func collapse(root: VMF) -> String:
 		var out = VString.new([])
-		for index in solids.size():
-			out.append(solids[index].collapse(root))
+		for index in array.size():
+			out.append(array[index].collapse(root))
 		return out.collapse()
+
+class VDictionary extends VBase:
+	var dict: Dictionary
+	func _init() -> void:
+		self.dict = {}
+	
+	func collapse(root: VMF) -> String:
+		var out = VString.new([])
+		for index in (self.dict):
+			if self.dict[index] is bool:
+				out.append('	"' + str(index) + ('" "1"' if self.dict[index] else '" "0"'))
+			elif (self.dict[index] is Array) or (self.dict[index] is Dictionary):
+				out.append(SourceGD.to_kv_string(root, index, self.dict[index]))
+			elif self.dict[index] is VBase:
+				out.append('"' + str(index) + '" "' + dict[index].collapse(root) + '"')
+			else:
+				out.append('	"' + str(index) + '" "' + str(self.dict[index]) + '"')
+		return out.collapse()
+	
+	func _set(key: StringName, value: Variant) -> bool:
+		self.dict[str(key)] = value
+		return true
 
 class VBase:
 	func collapse(root: VMF) -> String:
@@ -109,7 +133,29 @@ class VVector extends VBase:
 		return str(self.x) + " " + str(self.z) + " " + str(self.y)
 
 class Entity extends BaseEntity:
-	pass
+	var flags: Array
+	var values: VDictionary
+	
+	func _init(classname: String) -> void:
+		self.classname = classname
+		self.flags = []
+		self.values = VDictionary.new()
+		self.values["origin"] = VVector.new(Vector3(0, 0, 0))
+		self.values["angles"] = VVector.new(Vector3(0, 0, 0))
+	
+	func _set(key: StringName, value: Variant) -> bool:
+		self.values[str(key)] = value
+		return true
+	
+	func collapse(root: VMF) -> String:
+		return VString.new([
+			"entity",
+			"{",
+			'	"id" "' + root.get_uid() + '"',
+			'	"classname" "' + self.classname + '"',
+			self.values.collapse(root),
+			"}"
+		]).collapse()
 
 class BaseSolid extends BaseEntity:
 	var sides: Array
