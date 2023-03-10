@@ -124,11 +124,18 @@ class VVector extends VBase:
 	var x: float
 	var y: float
 	var z: float
+	var flip: bool
+	
 	func _init(vec: Vector3 = Vector3.ZERO) -> void:
 		self.x = vec.x
 		self.y = vec.y
 		self.z = vec.z
 	
+	func collapse(root: VMF) -> String:
+		return str(self.z) + " " + str(self.x) + " " + str(self.y)
+			# im unsure why swapping x and z works, but it does...
+
+class Vertex extends VVector:
 	func collapse(root: VMF) -> String:
 		return str(self.x) + " " + str(self.z) + " " + str(self.y)
 
@@ -136,12 +143,12 @@ class Entity extends BaseEntity:
 	var flags: Array
 	var values: VDictionary
 	
-	func _init(classname: String) -> void:
+	func _init(classname: String, position: Vector3 = Vector3.ZERO, rotation: Vector3 = Vector3.ZERO) -> void:
 		self.classname = classname
 		self.flags = []
 		self.values = VDictionary.new()
-		self.values["origin"] = VVector.new(Vector3(0, 0, 0))
-		self.values["angles"] = VVector.new(Vector3(0, 0, 0))
+		self.values["origin"] = VVector.new(position)
+		self.values["angles"] = Vertex.new(rotation) # hacky workaround 😡
 	
 	func _set(key: StringName, value: Variant) -> bool:
 		self.values[str(key)] = value
@@ -178,36 +185,37 @@ class BaseSolid extends BaseEntity:
 
 class CubeSolid extends BaseSolid:
 	func _init(position: Vector3, size: Vector3) -> void:
+		position = Vector3(position.z, position.y, position.x)
 		var sides = []
 		sides.append(Side.new(VPlane.new([
-			VVector.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
-			VVector.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z + size.z/2)),
-			VVector.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z - size.z/2)),
+			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
+			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z + size.z/2)),
+			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z - size.z/2)),
 		]), ""))
 		sides.append(Side.new(VPlane.new([
-			VVector.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
-			VVector.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
-			VVector.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z + size.z/2)),
+			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
+			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
+			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z + size.z/2)),
 		]), ""))
 		sides.append(Side.new(VPlane.new([
-			VVector.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
-			VVector.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z - size.z/2)),
-			VVector.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
+			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
+			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z - size.z/2)),
+			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
 		]), ""))
 		sides.append(Side.new(VPlane.new([
-			VVector.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z + size.z/2)),
-			VVector.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
-			VVector.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z - size.z/2)),
+			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z + size.z/2)),
+			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
+			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z - size.z/2)),
 		]), ""))
 		sides.append(Side.new(VPlane.new([
-			VVector.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z + size.z/2)),
-			VVector.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
-			VVector.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z + size.z/2)),
+			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z + size.z/2)),
+			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
+			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z + size.z/2)),
 		]), ""))
 		sides.append(Side.new(VPlane.new([
-			VVector.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
-			VVector.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
-			VVector.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z - size.z/2)),
+			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
+			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
+			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z - size.z/2)),
 		]), ""))
 		self.sides = sides
 
