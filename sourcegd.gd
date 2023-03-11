@@ -1,5 +1,11 @@
 extends Node
 
+var uvaxes = {
+	x = UVAxis.new(0, 1, 0, 0, 0.25, 0, 0, 1, 0, 0.25),
+	y = UVAxis.new(1, 0, 0, 0, 0.25, 0, 0, 1, 0, 0.25),
+	z = UVAxis.new(1, 0, 0, 0, 0.25, 0, 1, 0, 0, 0.25),
+}
+
 func to_kv_string(root: VMF, key: String, dict: Variant) -> String:
 	var out = VString.new([
 		key,
@@ -191,45 +197,75 @@ class CubeSolid extends BaseSolid:
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z - size.z/2)),
-		]), ""))
+		]), "TILE/WHITE_WALL_TILE003A", SourceGD.uvaxes.z))
 		sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z + size.z/2)),
-		]), ""))
+		]), "TILE/WHITE_WALL_TILE003A", SourceGD.uvaxes.z))
 		sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
-		]), ""))
+		]), "TILE/WHITE_WALL_TILE003A", SourceGD.uvaxes.x))
 		sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z - size.z/2)),
-		]), ""))
+		]), "TILE/WHITE_WALL_TILE003A", SourceGD.uvaxes.x))
 		sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z + size.z/2)),
-		]), ""))
+		]), "TILE/WHITE_WALL_TILE003A", SourceGD.uvaxes.y))
 		sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z - size.z/2)),
-		]), ""))
+		]), "TILE/WHITE_WALL_TILE003A", SourceGD.uvaxes.y))
 		self.sides = sides
+
+class UVAxis:
+	var u: String : get = _get_u
+	var v: String : get = _get_v
+	var uaxis: Dictionary
+	var vaxis: Dictionary
+	
+	func _init(x1: float, y1: float, z1: float, w1: float, scale1: float, x2: float, y2: float, z2: float, w2: float, scale2: float) -> void:
+		self.uaxis = {
+			x = x1,
+			y = y1,
+			z = z1,
+			w = w1,
+			scale = scale1
+		}
+		self.vaxis = {
+			x = x2,
+			y = y2,
+			z = z2,
+			w = w2,
+			scale = scale2
+		}
+	
+	func _get_u() -> String:
+		return "[" + str(self.uaxis.x) + " " + str(self.uaxis.y) + " " + str(self.uaxis.z) + " " + str(self.uaxis.w) + "] " + str(uaxis.scale)
+		
+	func _get_v() -> String:
+		return "[" + str(self.vaxis.x) + " " + str(self.vaxis.y) + " " + str(self.vaxis.z) + " " + str(self.vaxis.w) + "] " + str(uaxis.scale)
+
 
 class Side extends BaseEntity:
 	var plane: VPlane
 	var material: String
-#	var uaxis: UVAxis
+	var uvaxis: UVAxis
 	var lightmapscale: int
 	var smoothing_groups: int
-	func _init(plane: VPlane, material: String) -> void:
+	func _init(plane: VPlane, material: String, uvaxis: UVAxis) -> void:
 		self.plane = plane
 		self.material = material
 		self.lightmapscale = 16
 		self.smoothing_groups = 0
+		self.uvaxis = uvaxis
 	
 	func collapse(root: VMF) -> String:
 		return VString.new([
@@ -238,8 +274,10 @@ class Side extends BaseEntity:
 			'	"id" "' + root.get_uid() + '"',
 			'	"plane" "' + self.plane.collapse(root) + '"',
 			'	"material" "' + self.material.to_upper() + '"',
-			'	"uaxis" "[0 0 0 0] 0.25"', # todo: convert uvaxis
-			'	"vaxis" "[0 0 0 0] 0.25"', # todo: convert uvaxis
+			#'	"uaxis" "[1 0 0 0] 0.25"',
+			#'	"vaxis" "[0 1 0 0] 0.25"',
+			'	"uaxis" "' + uvaxis.u + '"',
+			'	"vaxis" "' + uvaxis.v + '"',
 			'	"rotation" "0"',
 			'	"lightmapscale" "' + str(self.lightmapscale) + '"',
 			'	"smoothing_groups" "' + str(self.smoothing_groups) + '"',
