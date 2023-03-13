@@ -154,7 +154,9 @@ class Entity extends BaseEntity:
 		self.flags = []
 		self.values = VDictionary.new()
 		self.values["origin"] = VVector.new(position)
-		self.values["angles"] = Vertex.new(rotation) # hacky workaround 😡
+#		self.values["angles"] = Vertex.new(rotation) # hacky workaround 😡
+		self.values["angles"] = Vertex.new(Vector3(rotation.x, -rotation.y, rotation.z))
+		# somehow this broke again so its time for more random hardcoded shenanigans
 	
 	func _set(key: StringName, value: Variant) -> bool:
 		self.values[str(key)] = value
