@@ -192,40 +192,39 @@ class BaseSolid extends BaseEntity:
 		return out.collapse()
 
 class CubeSolid extends BaseSolid:
-	func _init(position: Vector3, size: Vector3) -> void:
+	func _init(position: Vector3, size: Vector3, material: String = "tools/toolsnodraw") -> void:
 		position = Vector3(position.z, position.y, position.x)
-		var sides = []
-		sides.append(Side.new(VPlane.new([
+		self.sides = []
+		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z - size.z/2)),
-		]), "TILE/WHITE_WALL_TILE003A", SourceGD.uvaxes.z))
-		sides.append(Side.new(VPlane.new([
+		]), material, SourceGD.uvaxes.z))
+		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z + size.z/2)),
-		]), "TILE/WHITE_WALL_TILE003A", SourceGD.uvaxes.z))
-		sides.append(Side.new(VPlane.new([
+		]), material, SourceGD.uvaxes.z))
+		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
-		]), "TILE/WHITE_WALL_TILE003A", SourceGD.uvaxes.x))
-		sides.append(Side.new(VPlane.new([
+		]), material, SourceGD.uvaxes.x))
+		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z - size.z/2)),
-		]), "TILE/WHITE_WALL_TILE003A", SourceGD.uvaxes.x))
-		sides.append(Side.new(VPlane.new([
+		]), material, SourceGD.uvaxes.x))
+		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z + size.z/2)),
-		]), "TILE/WHITE_WALL_TILE003A", SourceGD.uvaxes.y))
-		sides.append(Side.new(VPlane.new([
+		]), material, SourceGD.uvaxes.y))
+		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z - size.z/2)),
-		]), "TILE/WHITE_WALL_TILE003A", SourceGD.uvaxes.y))
-		self.sides = sides
+		]), material, SourceGD.uvaxes.y))
 
 class UVAxis:
 	var u: String : get = _get_u
