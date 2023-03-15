@@ -192,39 +192,39 @@ class BaseSolid extends BaseEntity:
 		return out.collapse()
 
 class CubeSolid extends BaseSolid:
-	func _init(position: Vector3, size: Vector3, material: String = "tools/toolsnodraw") -> void:
+	func _init(position: Vector3, size: Vector3, materials: Array) -> void:
 		position = Vector3(position.z, position.y, position.x)
 		self.sides = []
 		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z - size.z/2)),
-		]), material, SourceGD.uvaxes.z))
+		]), materials[0], SourceGD.uvaxes.z))
 		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z + size.z/2)),
-		]), material, SourceGD.uvaxes.z))
+		]), materials[1], SourceGD.uvaxes.z))
 		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
-		]), material, SourceGD.uvaxes.x))
+		]), materials[2], SourceGD.uvaxes.x))
 		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z - size.z/2)),
-		]), material, SourceGD.uvaxes.x))
+		]), materials[3], SourceGD.uvaxes.x))
 		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z + size.z/2)),
-		]), material, SourceGD.uvaxes.y))
+		]), materials[4], SourceGD.uvaxes.y))
 		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z - size.z/2)),
-		]), material, SourceGD.uvaxes.y))
+		]), materials[5], SourceGD.uvaxes.y))
 
 class UVAxis:
 	var u: String : get = _get_u
