@@ -6,6 +6,24 @@ var uvaxes = {
 	z = UVAxis.new(1, 0, 0, 0, 0.25, 0, 1, 0, 0, 0.25),
 }
 
+var normals = [
+	Vector3(0,-1,0),
+	Vector3(0,1,0),
+	Vector3(0,0,-1),
+	Vector3(0,0,1),
+	Vector3(-1,0,0),
+	Vector3(1,0,0),
+]
+
+enum SURFACES {
+	NEGATIVE_Y,
+	POSITIVE_Y,
+	NEGATIVE_Z,
+	POSITIVE_Z,
+	NEGATIVE_X,
+	POSITIVE_X
+}
+
 func to_kv_string(root: VMF, key: String, dict: Variant) -> String:
 	var out = VString.new([
 		key,
