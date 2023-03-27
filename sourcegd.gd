@@ -66,10 +66,10 @@ class VMF:
 	func _init() -> void:
 		self.ent_count = 0
 		self.versioninfo = {
-			"editorversion": 0,
-			"editorbuild": 0,
+			"editorversion": 400,
+			"editorbuild": 8997,
 			"mapversion": 0,
-			"formatversion": 0,
+			"formatversion": 100,
 			"prefab": false
 		}
 		self.visgroups = []
@@ -163,14 +163,37 @@ class Vertex extends VVector:
 	func collapse(root: VMF) -> String:
 		return str(self.x) + " " + str(self.z) + " " + str(self.y)
 
+class Connections extends VBase:
+	var connections: Array
+	func _init() -> void:
+		self.connections = []
+	
+	func add(output: String, target: String) -> void:
+		self.connections.append({
+			output = output,
+			target = target
+		})
+	
+	func collapse(root: VMF) -> String:
+		var out = VString.new([
+			"connections",
+			"{"
+		])
+		for con in self.connections.size():
+			out.append("\"" + self.connections[con].output + "\" \"" + self.connections[con].target + "\"")
+		out.append("}")
+		return out.collapse()
+
 class Entity extends BaseEntity:
 	var flags: Array
 	var values: VDictionary
+	var connections: Connections
 	
 	func _init(classname: String, position: Vector3 = Vector3.ZERO, rotation: Vector3 = Vector3.ZERO) -> void:
 		self.classname = classname
 		self.flags = []
 		self.values = VDictionary.new()
+		self.connections = Connections.new()
 		self.values["origin"] = VVector.new(position)
 #		self.values["angles"] = Vertex.new(rotation) # hacky workaround 😡
 		self.values["angles"] = Vertex.new(Vector3(rotation.x, -rotation.y, rotation.z))
@@ -187,8 +210,12 @@ class Entity extends BaseEntity:
 			'	"id" "' + root.get_uid() + '"',
 			'	"classname" "' + self.classname + '"',
 			self.values.collapse(root),
+			self.connections.collapse(root),
 			"}"
 		]).collapse()
+	
+	func add_output(output: String, target: String) -> void:
+		self.connections.add(output, target)
 
 class BaseSolid extends BaseEntity:
 	var sides: Array
