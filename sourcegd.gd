@@ -184,7 +184,7 @@ class Connections extends VBase:
 		out.append("}")
 		return out.collapse()
 
-class Entity extends BaseEntity:
+class VEntity extends BaseEntity:
 	var flags: Array
 	var values: VDictionary
 	var connections: Connections
