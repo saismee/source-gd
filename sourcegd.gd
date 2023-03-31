@@ -254,12 +254,12 @@ class CubeSolid extends BaseSolid:
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y - size.y/2, position.z - size.z/2)),
-		]), materials[2], SourceGD.uvaxes.x))
+		]), materials[3], SourceGD.uvaxes.x))
 		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y - size.y/2, position.z - size.z/2)),
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z - size.z/2)),
-		]), materials[3], SourceGD.uvaxes.x))
+		]), materials[2], SourceGD.uvaxes.x))
 		self.sides.append(Side.new(VPlane.new([
 			Vertex.new(Vector3(position.x + size.x/2, position.y + size.y/2, position.z + size.z/2)),
 			Vertex.new(Vector3(position.x - size.x/2, position.y + size.y/2, position.z + size.z/2)),
