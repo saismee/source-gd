@@ -9,7 +9,7 @@ var surface_axes = [
 	["z", "x", "y"]
 ]
 
-func _init(position: Vector3, size: Vector3, materials: Array, surface: int, indent: int = 8) -> void:
+func _init(position: Vector3, size: Vector3, materials: Array, surface: int, adjacent: Array, indent: int = 8) -> void:
 	position = Vector3(position.z, position.y, position.x)
 	
 	var target = position

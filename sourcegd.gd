@@ -300,7 +300,7 @@ class UVAxis:
 		return "[" + str(self.vaxis.x) + " " + str(self.vaxis.y) + " " + str(self.vaxis.z) + " " + str(self.vaxis.w) + "] " + str(uaxis.scale)
 
 
-class Side extends BaseEntity:
+class Side extends VPlane:
 	var plane: VPlane
 	var material: String
 	var uvaxis: UVAxis
